@@ -1,0 +1,11 @@
+node_modules
+.env.local
+
+# private images
+docker
+
+# Keep tar files but ignore large ones if needed
+*.tar
+*.tar.gz
+
+node_modules

@@ -1,0 +1,106 @@
+# 环境变量文件
+.env*
+.env.local
+.env.*.local
+
+# 构建输出目录
+dist/
+build/
+
+# Docker 相关文件
+docker/
+Dockerfile*
+.dockerignore
+docker-compose*.yaml
+docker-compose*.yml
+
+# 依赖目录
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 版本控制
+.git/
+.gitignore
+.gitattributes
+
+# 文档目录
+doc/
+docs/
+*.md
+README*
+
+# 测试相关
+__tests__/
+*.test.*
+*.spec.*
+coverage/
+.nyc_output/
+
+# 开发工具配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 临时文件
+tmp/
+temp/
+.tmp/
+
+# macOS 系统文件
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows 系统文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 编辑器备份文件
+*~
+*.bak
+*.orig
+
+# 压缩包和镜像文件
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# 开发配置文件
+nodemon.json
+.bunfig.toml
+tsconfig.json
+
+# 锁文件（可选，根据需要决定是否包含）
+package-lock.json
+yarn.lock
+bun.lockb
+
+# 其他工具
+.yalc/
+yalc.lock
+.next/
+.nuxt/
+.cache/
+
+# 自定义排除
+testApi/
+images/
+售后场景.md
+开发指导文档.md
+快速开发指南.md
