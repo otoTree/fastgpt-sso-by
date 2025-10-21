@@ -86,7 +86,7 @@ export const gacc_getUserInfo: GetUserInfoFn = async (code: string) => {
 
 
     return {
-        username: `${UserPrefix}-${decryptedString}`,
+        username: `${UserPrefix.GACC}-${decryptedString}`,
         avatar: '',
         contact: '',
     }
@@ -133,7 +133,7 @@ const getUserInOrgByParentGuid = async (parentGuid: string): Promise<UserType[]>
         // 直接从API响应中提取需要的数据，转换为UserType格式
         const users: UserType[] = rawUsers.map((user: any) => {
             return {
-                username: `${UserPrefix}-${user.userGuid}`, // 使用userGuid作为username
+                username: `${UserPrefix.GACC}-${user.userGuid}`, // 使用userGuid作为username
                 memberName: user.displayName, // 使用displayName作为memberName
                 avatar: '', // API中没有头像信息，设为空字符串
                 contact: user.eMail || '', // 使用eMail作为联系方式
@@ -454,34 +454,30 @@ export const gacc_getUserList: GetUserListFn = async () => {
 
         console.log(`${new Date().toISOString()}[gacc_getUserList] 并发处理完成，共收集到 ${allUsers.length} 个用户记录`);
 
-        // 现在进行去重并合并组织信息
+        // 现在进行去重并合并用户信息（不使用分批处理，避免竞态条件）
         const userMap = new Map<string, UserType>();
 
-        // 分批处理用户数据以优化内存使用
-        const USER_PROCESS_BATCH_SIZE = 1000;
-        for (let i = 0; i < allUsers.length; i += USER_PROCESS_BATCH_SIZE) {
-            const userBatch = allUsers.slice(i, i + USER_PROCESS_BATCH_SIZE);
-
-            for (const user of userBatch) {
-                if (user.username) {
-                    if (userMap.has(user.username)) {
-                        // 用户已存在，合并组织信息
-                        const existingUser = userMap.get(user.username)!;
-                        if (user.orgs && user.orgs.length > 0) {
-                            existingUser.orgs = existingUser.orgs || [];
-                            // 合并组织，去重
-                            const orgSet = new Set([...existingUser.orgs, ...user.orgs]);
-                            existingUser.orgs = Array.from(orgSet);
-                        }
-                    } else {
-                        // 新用户，直接添加
-                        userMap.set(user.username, user);
+        // 直接遍历所有用户进行去重
+        for (const user of allUsers) {
+            if (user.username) {
+                if (userMap.has(user.username)) {
+                    // 用户已存在，合并用户信息
+                    const existingUser = userMap.get(user.username)!;
+                    
+                    // 合并组织信息，去重
+                    if (user.orgs && user.orgs.length > 0) {
+                        existingUser.orgs = existingUser.orgs || [];
+                        const orgSet = new Set([...existingUser.orgs, ...user.orgs]);
+                        existingUser.orgs = Array.from(orgSet);
                     }
+                    
+                    
+                    console.log(`${new Date().toISOString()}[gacc_getUserList] 合并重复用户: ${user.username}, 组织数量: ${existingUser.orgs?.length || 0}`);
+                } else {
+                    // 新用户，直接添加
+                    userMap.set(user.username, user);
                 }
             }
-
-            // 清理已处理的批次数据
-            userBatch.length = 0;
         }
 
         // 清理原始用户数组以释放内存
